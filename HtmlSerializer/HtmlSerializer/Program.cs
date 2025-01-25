@@ -16,28 +16,23 @@ using System.Text.RegularExpressions;
     {
         var trimmedLine = line.Trim();
 
-        // בדיקה אם מדובר בתגית "html/" (סוף)
         if (trimmedLine.Equals("/html"))
         {
             break;
         }
 
-        // בדיקה אם מדובר בתגית סוגרת
         if (trimmedLine.StartsWith("/"))
         {
             
             var closedElement = elementsStack.Pop();
 
 
-            // אם מדובר בתגית סוגרת, התוכן הפנימי נשמר
             closedElement.InnerHtml = closedElement.InnerHtml.Trim();
             continue;
         }
 
-        // שליפת שם התגית
         var tagName = trimmedLine.Split(' ')[0];
 
-        // אם התגית מוכרת (html או void)
         if (htmlTags.Contains(tagName))
         {
             if (elementsStack.Count == 0)
@@ -47,7 +42,6 @@ using System.Text.RegularExpressions;
             var newElement = new HtmlElement
             {
                 Name = tagName,
-                //Id = Guid.NewGuid().ToString(),
               
 
            
@@ -55,7 +49,6 @@ using System.Text.RegularExpressions;
                 Parent = elementsStack.Peek(),
             };
 
-            // ניתוח Attributes
             var attributesRegex = new Regex("([^\\s]*?)=\"(.*?)\"");
             var matches = attributesRegex.Matches(trimmedLine);
             foreach (Match match in matches)
@@ -99,24 +92,22 @@ using System.Text.RegularExpressions;
                 }
             }
 
-            // הוספת האלמנט לרשימת הילדים של האלמנט הנוכחי
             elementsStack.Peek().Children.Add(newElement);
 
-            // אם זו לא תגית void, הוספת האלמנט למחסנית
             if (!htmlVoidTags.Contains(tagName))
             {
                 elementsStack.Push(newElement);
             }
             else
             {
-                // לתגיות void אין תוכן פנימי
+             
                 newElement.InnerHtml = string.Empty;
                 newElement.Children = null;
             }
         }
         else
         {
-            // אם זו לא תגית, זהו תוכן פנימי של האלמנט הנוכחי
+           
             elementsStack.Peek().InnerHtml += " " + trimmedLine;
         }
     }
@@ -133,15 +124,6 @@ async Task<string> Load(string url)
 
 //main
 var html = await Load("https://hebrewbooks.org/beis");
-//אני
-//var cleanHtml = new Regex("[\\t\\n\\r\\v\\f]").Replace(html, "");
-//cleanHtml = Regex.Replace(cleanHtml, @"[ ]{2,}", " ");
-//var htmllines = new Regex("<(.*?)>").Split(cleanHtml).Where(s => s.Length > 1);
-//שושי
-//var splitHtml = new Regex("<(.*?)>").Split(html);
-//var regaxCleanHtml = new Regex("[\\t\\n\\r\\v\\f]");
-//var htmllines = splitHtml.Select(line => regaxCleanHtml.Replace(line, "")).Where(l => !string.IsNullOrWhiteSpace(l));
-
 
 
 var cleanHtml = new Regex("\\s").Replace(html, " ");

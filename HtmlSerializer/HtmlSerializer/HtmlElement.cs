@@ -62,13 +62,11 @@ namespace HtmlSerializer
 
         public override string ToString()
         {
-            // בניית החלק של ה-ID
             string idPart = string.IsNullOrEmpty(Id) ? "" : $" id=\"{Id}\"";
 
-            // בניית החלק של ה-Classes
+        
             string classPart = Classes != null && Classes.Any() ? $" class=\"{string.Join(" ", Classes)}\"" : "";
 
-            // הרכבת התוצאה
             return $"<{Name}{idPart}{classPart}>";
         }
 
